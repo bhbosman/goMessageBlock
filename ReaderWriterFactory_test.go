@@ -1,8 +1,9 @@
-package gomessageblock
+package gomessageblock_test
 
 import (
 	"context"
 	"github.com/bhbosman/gologging"
+	"github.com/bhbosman/gomessageblock"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/fx"
@@ -11,11 +12,11 @@ import (
 )
 
 func TestWriterFactoryService(t *testing.T) {
-	var sut IReaderWriterFactoryService
+	var sut gomessageblock.IReaderWriterFactoryService
 	app := fxtest.New(
 		t,
 		gologging.ProvideLogFactoryForTesting(t, nil),
-		ProvideReaderWriterFactoryService(),
+		gomessageblock.ProvideReaderWriterFactoryService(),
 		fx.Populate(&sut),
 	)
 	if !assert.NoError(t, app.Err()) {

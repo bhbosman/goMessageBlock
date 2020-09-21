@@ -1,22 +1,23 @@
-package gomessageblock
+package gomessageblock_test
 
 import (
 	"bytes"
 	"crypto/sha1"
+	"github.com/bhbosman/gomessageblock"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestReaderWriter(t *testing.T) {
 	t.Run("empty read", func(t *testing.T) {
-		rw := NewReaderWriter()
+		rw := gomessageblock.NewReaderWriter()
 		read, err := rw.Read([]byte{0})
 		assert.Error(t, err)
 		assert.Equal(t, 0, read)
 	})
 
 	t.Run("one 4096W, 4 x 1024R, empty buffer", func(t *testing.T) {
-		rw := NewReaderWriter()
+		rw := gomessageblock.NewReaderWriter()
 		n, err := rw.Write(make([]byte, 4096))
 		assert.NoError(t, err)
 		assert.Equal(t, 4096, n)
@@ -33,7 +34,7 @@ func TestReaderWriter(t *testing.T) {
 	})
 
 	t.Run("one 4096W, 4 x 1024R, empty buffer", func(t *testing.T) {
-		rw := NewReaderWriter()
+		rw := gomessageblock.NewReaderWriter()
 		for i := 0; i < 8; i++ {
 			n, err := rw.Write(make([]byte, 1024))
 			assert.NoError(t, err)
@@ -52,7 +53,7 @@ func TestReaderWriter(t *testing.T) {
 	})
 
 	t.Run("", func(t *testing.T) {
-		rw := NewReaderWriterSize(512)
+		rw := gomessageblock.NewReaderWriterSize(512)
 		for i := 0; i < 8; i++ {
 			n, err := rw.Write(make([]byte, 1024))
 			assert.NoError(t, err)
@@ -62,9 +63,9 @@ func TestReaderWriter(t *testing.T) {
 	})
 
 	t.Run("flatten to next", func(t *testing.T) {
-		rw01 := NewReaderWriterSize(512)
+		rw01 := gomessageblock.NewReaderWriterSize(512)
 		_, _ = rw01.Write([]byte{1})
-		rw02 := NewReaderWriterSize(512)
+		rw02 := gomessageblock.NewReaderWriterSize(512)
 		_, _ = rw02.Write([]byte{2})
 		rw01.Add(rw02)
 		assert.Equal(t, 2, rw01.Size())
@@ -76,13 +77,13 @@ func TestReaderWriter(t *testing.T) {
 	})
 
 	t.Run("flatten to next", func(t *testing.T) {
-		rw01 := NewReaderWriterSize(128)
+		rw01 := gomessageblock.NewReaderWriterSize(128)
 		_, _ = rw01.Write(make([]byte, 20))
 		_, _ = rw01.Write(make([]byte, 2048))
 		assert.Equal(t, 2068, rw01.Size())
 		assert.Equal(t, 108, rw01.Waste())
 
-		rw02 := NewReaderWriterSize(256)
+		rw02 := gomessageblock.NewReaderWriterSize(256)
 		_, _ = rw02.Write(make([]byte, 20))
 		_, _ = rw02.Write(make([]byte, 4096))
 		assert.Equal(t, 4116, rw02.Size())
@@ -111,14 +112,14 @@ func TestReaderWriter(t *testing.T) {
 		mustbe := sha1Hash.Sum(nil)
 		sha1Hash.Reset()
 
-		rw01 := NewReaderWriterSize(128)
+		rw01 := gomessageblock.NewReaderWriterSize(128)
 		_, err = rw01.Write(data001)
 		assert.NoError(t, err)
-		rw02 := NewReaderWriterSize(128)
+		rw02 := gomessageblock.NewReaderWriterSize(128)
 		_, err = rw02.Write(data002)
 		assert.NoError(t, err)
 
-		rw03 := NewReaderWriterSize(128)
+		rw03 := gomessageblock.NewReaderWriterSize(128)
 		_, err = rw03.Write(data003)
 		assert.NoError(t, err)
 
@@ -138,7 +139,7 @@ func TestReaderWriter(t *testing.T) {
 			sha1Hash := sha1.New()
 			mustbe := sha1Hash.Sum(nil)
 			sha1Hash.Reset()
-			rw01 := NewReaderWriterSize(128)
+			rw01 := gomessageblock.NewReaderWriterSize(128)
 			err := rw01.Dump(sha1Hash)
 			assert.NoError(t, err)
 
@@ -156,7 +157,7 @@ func TestReaderWriter(t *testing.T) {
 			mustbe := sha1Hash.Sum(nil)
 			sha1Hash.Reset()
 
-			rw01 := NewReaderWriterSize(128)
+			rw01 := gomessageblock.NewReaderWriterSize(128)
 			_, err = rw01.Write(data)
 			assert.NoError(t, err)
 			err = rw01.Dump(sha1Hash)
@@ -180,10 +181,10 @@ func TestReaderWriter(t *testing.T) {
 			mustbe := sha1Hash.Sum(nil)
 			sha1Hash.Reset()
 
-			rw01 := NewReaderWriterSize(128)
+			rw01 := gomessageblock.NewReaderWriterSize(128)
 			_, err = rw01.Write(data001)
 			assert.NoError(t, err)
-			rw02 := NewReaderWriterSize(128)
+			rw02 := gomessageblock.NewReaderWriterSize(128)
 			_, err = rw01.Write(data002)
 			assert.NoError(t, err)
 
@@ -214,14 +215,14 @@ func TestReaderWriter(t *testing.T) {
 			mustbe := sha1Hash.Sum(nil)
 			sha1Hash.Reset()
 
-			rw01 := NewReaderWriterSize(128)
+			rw01 := gomessageblock.NewReaderWriterSize(128)
 			_, err = rw01.Write(data001)
 			assert.NoError(t, err)
-			rw02 := NewReaderWriterSize(128)
+			rw02 := gomessageblock.NewReaderWriterSize(128)
 			_, err = rw02.Write(data002)
 			assert.NoError(t, err)
 
-			rw03 := NewReaderWriterSize(128)
+			rw03 := gomessageblock.NewReaderWriterSize(128)
 			_, err = rw03.Write(data003)
 			assert.NoError(t, err)
 
@@ -268,7 +269,7 @@ func TestReaderWriter(t *testing.T) {
 		_, err = rw03.Write(data003)
 		assert.NoError(t, err)
 
-		ma := NewReaderWriter()
+		ma := gomessageblock.NewReaderWriter()
 		err = ma.AddReaders(&rw01, &rw02, &rw03)
 		if !assert.NoError(t, err) {
 			return
@@ -285,8 +286,8 @@ func TestReaderWriter(t *testing.T) {
 		assert.Equal(t, mustbe, valueIs)
 	})
 	t.Run("setnext", func(t *testing.T) {
-		b1 := NewReaderWriterBlock([]byte{1, 2, 3, 4, 5})
-		b2 := NewReaderWriterBlock([]byte{6, 7, 8, 9, 10})
+		b1 := gomessageblock.NewReaderWriterBlock([]byte{1, 2, 3, 4, 5})
+		b2 := gomessageblock.NewReaderWriterBlock([]byte{6, 7, 8, 9, 10})
 		b1.SetNext(b2)
 		data := make([]byte, 10)
 		n, _ := b1.Read(data)
@@ -294,9 +295,9 @@ func TestReaderWriter(t *testing.T) {
 		assert.Equal(t, []byte{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, data)
 	})
 	t.Run("setnext", func(t *testing.T) {
-		b1 := NewReaderWriterBlock([]byte{1, 2, 3, 4, 5})
-		b2 := NewReaderWriterBlock([]byte{6, 7, 8, 9, 10})
-		b3 := NewReaderWriterBlock([]byte{11, 12, 13, 14, 15})
+		b1 := gomessageblock.NewReaderWriterBlock([]byte{1, 2, 3, 4, 5})
+		b2 := gomessageblock.NewReaderWriterBlock([]byte{6, 7, 8, 9, 10})
+		b3 := gomessageblock.NewReaderWriterBlock([]byte{11, 12, 13, 14, 15})
 		_ = b1.SetNext(b2)
 		_ = b1.SetNext(b3)
 		data := make([]byte, 15)
