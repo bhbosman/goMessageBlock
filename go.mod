@@ -8,3 +8,9 @@ require (
 	github.com/stretchr/testify v1.6.1
 	go.uber.org/fx v1.13.1
 )
+
+
+replace (
+	github.com/bhbosman/gologging => ../gologging
+)
+
