@@ -9,8 +9,3 @@ require (
 	go.uber.org/fx v1.13.1
 )
 
-
-replace (
-	github.com/bhbosman/gologging => ../gologging
-)
-
